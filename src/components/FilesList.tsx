@@ -243,6 +243,7 @@ export default function FilesList({ filesprops, tagsprops }) {
     }
     for (let i = 0; i < files.length; i++) {
       const fileInfo = {
+        name: files[i].name,
         path: files[i].path,
         lastModified: files[i].lastModified,
       };
@@ -349,6 +350,7 @@ export default function FilesList({ filesprops, tagsprops }) {
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
+            <th scope="col" style={{ maxWidth: "150px" }}>ファイル名</th>
             <th scope="col" style={{ width: "200px" }}>
               パス
             </th>
@@ -360,6 +362,12 @@ export default function FilesList({ filesprops, tagsprops }) {
         <tbody className="h-100">
           {filteredFiles.map((file, index) => (
             <tr key={index}>
+              <td
+                className="file-element"
+                onClick={() => handleFileOpen(file.path)}
+              >
+                {file.name}
+              </td>
               <td
                 className="file-element"
                 onClick={() => handleFileOpen(file.path)}
