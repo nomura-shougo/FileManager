@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "build": "webpack --config webpack.common.ts",
     "watch": "webpack --config webpack.common.ts --watch"
   },
   "author": "",
