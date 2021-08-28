@@ -116,6 +116,18 @@ export default function FilesList({ filesprops, tagsprops }) {
   useEffect(() => {
     // console.log(searchYears);
     const filtered = filesprops
+      .map((file) => {
+        if (file.relatedTags) {
+          file.relatedTags = file.relatedTags.map((relatedTag) => {
+            relatedTag.name =
+              tagsprops[
+                tagsprops.findIndex((tag) => tag.id === relatedTag.id)
+              ].name;
+            return relatedTag;
+          });
+        }
+        return file;
+      })
       .filter((file) => {
         if (!searchYears.length) {
           return true;
