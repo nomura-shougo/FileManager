@@ -37,6 +37,7 @@ export default function FilesList({ filesprops, tagsprops }) {
   const [searchYears, setSearchYears] = useState<any[]>([]);
   const [searchTags, setSearchTags] = useState<any[]>([]);
   const [fileOrder, setFileOrder] = useState<string>();
+  const [searchFileName, setSearchFileName] = useState<string>();
   const [data, setData] = useState<any>();
 
   // const options = [
@@ -148,6 +149,17 @@ export default function FilesList({ filesprops, tagsprops }) {
                 .includes(searchTag)
           );
         }
+      })
+      .filter((file) => {
+        if (!searchFileName) {
+          return true;
+        } else {
+          if (file.name === undefined) {
+            return false;
+          } else {
+            return file.name.includes(searchFileName);
+          }
+        }
       });
     if (fileOrder === "lastModifiedAsc") {
       filtered.sort((a, b) => a.lastModified - b.lastModified);
@@ -156,7 +168,14 @@ export default function FilesList({ filesprops, tagsprops }) {
     }
     // console.log(filtered);
     setFilteredFiles(filtered);
-  }, [searchYears, searchTags, fileOrder, filesprops, tagsprops]);
+  }, [
+    searchYears,
+    searchTags,
+    fileOrder,
+    searchFileName,
+    filesprops,
+    tagsprops,
+  ]);
   useEffect(() => {
     const tagOptions = tagsprops.map((fetchTag) => {
       return { value: fetchTag.id, label: fetchTag.name };
@@ -231,6 +250,11 @@ export default function FilesList({ filesprops, tagsprops }) {
       fileOrder = selectOrder.value;
     }
     setFileOrder(fileOrder);
+  };
+  const onSearchFileNameChange = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSearchFileName(e.target.value);
   };
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -317,40 +341,56 @@ export default function FilesList({ filesprops, tagsprops }) {
     >
       <h6 className="mt-3">ファイル一覧</h6>
       ファイルをドロップしてください
-      <div className="d-flex justify-content-start mb-3">
-        年度：
-        <div style={{ width: "250px" }}>
-          <Select
-            options={createYearOptions()}
-            onChange={onSearchYearChange}
-            isMulti
-            autoBlur={false}
-            closeMenuOnSelect={false}
-          />
+      <div className="row">
+        <div className="d-flex justify-content-start mb-3">
+          年度：
+          <div style={{ width: "250px" }}>
+            <Select
+              options={createYearOptions()}
+              onChange={onSearchYearChange}
+              isMulti
+              autoBlur={false}
+              closeMenuOnSelect={false}
+            />
+          </div>
+          タグ：
+          <div style={{ width: "250px" }}>
+            <Select
+              options={tagOptions}
+              onChange={onSearchTagChange}
+              isMulti
+              autoBlur={false}
+              closeMenuOnSelect={false}
+            />
+          </div>
+          並び替え：
+          <div style={{ width: "250px" }}>
+            <Select
+              options={orderOptions}
+              onChange={onFileOrderChange}
+              isClearable={true}
+            />
+          </div>
         </div>
-        タグ：
-        <div style={{ width: "250px" }}>
-          <Select
-            options={tagOptions}
-            onChange={onSearchTagChange}
-            isMulti
-            autoBlur={false}
-            closeMenuOnSelect={false}
-          />
-        </div>
-        並び替え：
-        <div style={{ width: "250px" }}>
-          <Select
-            options={orderOptions}
-            onChange={onFileOrderChange}
-            isClearable={true}
-          />
+        <div className="row">
+          <div className="d-flex justify-content-start mb-3">
+            ファイル名：
+            <div style={{ width: "250px" }}>
+              <input
+                type="fileName"
+                className="form-control"
+                onChange={onSearchFileNameChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
-            <th scope="col" style={{ maxWidth: "150px" }}>ファイル名</th>
+            <th scope="col" style={{ maxWidth: "150px" }}>
+              ファイル名
+            </th>
             <th scope="col" style={{ width: "200px" }}>
               パス
             </th>
