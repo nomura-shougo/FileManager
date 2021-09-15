@@ -18,6 +18,8 @@ export default function tagsList({ tagsprops }) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalEditIsOpen, setEditIsOpen] = useState(false);
   const [targetTagName, setTargetTagName] = useState("");
+  const [searchTagName, setSearchTagName] = useState<string>();
+  const [filteredTags, setFilteredTags] = useState<Object[]>([]);
   const { register, handleSubmit, reset, setValue } = useForm<IFormInput>();
   const [tags, setTags] = useState<Object[]>([]);
   // useEffect(() => {
@@ -39,6 +41,24 @@ export default function tagsList({ tagsprops }) {
     setTags(tagsprops);
     console.log(tagsprops);
   }, [tagsprops]);
+
+  useEffect(() => {
+    const filtered = tagsprops.filter((tag) => {
+      if (!searchTagName) {
+        return true;
+      } else {
+        if (tag.name === undefined) {
+          return false;
+        } else {
+          return tag.name.includes(searchTagName);
+        }
+      }
+    });
+    setFilteredTags(filtered);
+  }, [
+    searchTagName,
+    tagsprops,
+  ]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     // console.log(data);
@@ -64,6 +84,11 @@ export default function tagsList({ tagsprops }) {
     // createTag({ name: data.tagName });
     // reset();
   };
+  const onSearchTagNameChange = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSearchTagName(e.target.value);
+  };
   return (
     <div className={"col-10 m-0 overflow-auto h-100"}>
       タグ一覧
@@ -78,6 +103,20 @@ export default function tagsList({ tagsprops }) {
           タグを追加する
         </button>
       </div>
+      <div className="row">
+        <div className="d-flex justify-content-start mb-3">
+          <div className="d-flex justify-content-start mb-3">
+            タグ名：
+            <div style={{ width: "250px" }}>
+              <input
+                type="tagName"
+                className="form-control"
+                onChange={onSearchTagNameChange}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
@@ -85,7 +124,7 @@ export default function tagsList({ tagsprops }) {
           </tr>
         </thead>
         <tbody className="h-100">
-          {tags.map((tag, index) => (
+          {filteredTags.map((tag, index) => (
             <tr key={index}>
               <td className="d-flex justify-content-between">
                 <div>{tag.name}</div>
